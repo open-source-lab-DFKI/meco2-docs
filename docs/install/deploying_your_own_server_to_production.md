@@ -5,19 +5,33 @@ Projects that want to control their own data under protocols different from e-mi
 
 ## Basic instructions ##
 
-### Development installation ###
-Install the server following the development dependencies (https://github.com/e-mission/e-mission-server#dependencies) and installation instructions (https://github.com/e-mission/e-mission-server#development). Note that:
+### Option 1: Installation using a docker
+
+The docker installation allows the installation of the server from a predefined image, which minimizes the effort. This process is further detailed in the separate repository <a href="https://github.com/e-mission/e-mission-docker">"e-mission-docker"</a>.
+
+### Option 2: Manual Installation ###
+
 > deployment is as simple as pulling from the repo to the real server and changing the config files slightly.
 
+Make sure that Git is installed. If not, install it by using the package manager of your operating system. Additionally download and install <a href="https://docs.conda.io/en/latest/miniconda.html">MiniConda 3</a>. 
+
+Open a terminal and point it to the directory where the code should be downloaded and installed. The following command will clone the server locally. 
+
 ```
-$ git clone https://github.com/e-mission/e-mission-server.git
+git clone https://github.com/e-mission/e-mission-server.git
 ```
 
-While following the instructions to start the server, make sure to point to the python binary from the anaconda distribution.
+Then enter the directory and run the installation script. 
+
+```
+bash setup/setup.sh
+```
+
+% While following the instructions to start the server, make sure to point to the python binary from the anaconda distribution.
 
 ### Upgrade to production ###
-- Install NTP (https://help.ubuntu.com/lts/serverguide/NTP.html). If this is
-  not done, the server can become too far out of sync with the client, and we
+- Install NTP, following your instuction for your operating system (e.g. <a href="https://help.ubuntu.com/lts/serverguide/NTP.html">for Ubuntu</a>). If this is
+  not done, the server time can be unstable and go far out of sync with the client, and we
   end up with errors related to expired tokens
 - If running on a cloud provider, note that the cloud provider admins by looking at the disk image directly. you can choose to <a href="#cryptfs-suggested">install an encrypted
   filesystem to store the data</a>
@@ -118,8 +132,8 @@ The server needs three ongoing processes. The instructions here are for *nix sys
 #### The webserver ####
   It would be good to have this set up with a watchdog so that it can
   automatically restart if it goes down (e.g. due to out of memory errors).  I
-  use the `supervisord` watchdog (http://supervisord.org/). If you want to use
-  the same, the e-mission configuration that I use is
+  use the <a href="http://supervisord.org/">Supervisord watchdog</a>. If you want to use
+  the same, the e-mission configuration that I use is:
 
    ```
    [program:emissionpy]
@@ -132,12 +146,12 @@ The server needs three ongoing processes. The instructions here are for *nix sys
    ```
   where `/code/` and `/log/` are separate encrypted filesystems.
 
-  1. Note that supervisord only runs on python 2.7, although e-mission is now on python 3.6. You need to set up a parallel py27 environment to run it. https://github.com/e-mission/e-mission-server/issues/530#issuecomment-351776014
+  1. Note that supervisord only runs on python 2.7, although e-mission is now on python 3.6. You need to set up a parallel py27 environment to run it. (See <a href="https://github.com/e-mission/e-mission-server/issues/530#issuecomment-351776014">Issue #530</a>)
   ```
   $ conda create -n py27 python=2.7
   $ source activate py27
   ```
-  2. Setup supervisord and configure it based on the instructions (http://supervisord.org/installing.html) - e.g.
+  2. Setup supervisord and configure it based on the <a href="http://supervisord.org/installing.html">instructions</a> - e.g.:
   ```
   $ pip install supervisor
   $ echo_supervisord_conf > ~/supervisord.conf
